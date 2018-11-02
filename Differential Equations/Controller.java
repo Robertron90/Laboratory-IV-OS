@@ -1,47 +1,43 @@
 package sample;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import java.io.IOException;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class Controller {
 
-    @FXML
-    private ResourceBundle resourceBundle;
+  @FXML
+  private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+  @FXML
+  private URL location;
 
-    @FXML
-    private TextField firstText;
+  @FXML
+  private TextField txt1;
 
-    @FXML
-    private TextField secondText;
+  @FXML
+  private TextField txt2;
 
-    @FXML
-    private TextField thirdText;
+  @FXML
+  private TextField txt3;
 
-    @FXML
-    private TextField fourthText;
+  @FXML
+  private TextField txt4;
 
-    @FXML
-    private Button buttonSetter;
+  @FXML
+  private Button btn;
 
-    @FXML
-    void initialize() {
-        buttonSetter.setOnAction(event -> {
-            Stage stage = new Stage();
-            stage.setTitle("Plot");
+  @FXML
+  void initialize() {
+    btn.setOnAction(event -> {
+      Stage stage = new Stage();
+      stage.setTitle("Plot");
 
-            MVmanager mVmanager = new MVmanager();
-            mVmanager.printer(stage,Double.parseDouble(firstText.getText()),Double.parseDouble(secondText.getText()),Double.parseDouble(thirdText.getText()),Double.parseDouble(fourthText.getText()));
-        });
-    }
+      MVmanager appController = new MVmanager();
+      appController.printer(stage,Double.parseDouble(txt1.getText()),Double.parseDouble(txt2.getText()),Double.parseDouble(txt3.getText()),Double.parseDouble(txt4.getText()));
+    });
+  }
 }
