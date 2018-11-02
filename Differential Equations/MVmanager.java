@@ -5,28 +5,25 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import static java.lang.Math.abs;
-import javafx.scene.chart.XYChart.Data;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.Cursor;
 
 public class MVmanager {
 
-    private double erf(double x) {
-        double sign = x >= 0 ? 1 : -1;
-        x = abs(x);
+    public static double erf(double z) {
+        double t = 1.0 / (1.0 + 0.5 * Math.abs(z));
 
-        double a1 = 0.254829592;
-        double a2 = -0.284496736;
-        double a3 = 1.421413741;
-        double a4 = -1.453152027;
-        double a5 = 1.061405429;
-        double p = 0.3275911;
-
-        double t = 1.0 / (1.0 + p * x);
-        double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
-        return sign * y;
+        // using Horner's method for the calculation of the error function erf(x)
+        double ans = 1 - t * Math.exp(-z * z - 1.26551223 +
+                t * (1.00002368 +
+                        t * (0.37409196 +
+                                t * (0.09678418 +
+                                        t * (-0.18628806 +
+                                                t * (0.27886807 +
+                                                        t * (-1.13520398 +
+                                                                t * (1.48851587 +
+                                                                        t * (-0.82215223 +
+                                                                                t * (0.17087277))))))))));
+        if (z >= 0) return ans;
+        else return -ans;
     }
 
     private double diffEquation(double x, double y) {
@@ -85,7 +82,7 @@ public class MVmanager {
         double k1Runge;
         double k2Runge;
         double k3Runge;
-                
+
         for (int j = 1; j < n; j++)
         {
             solvedFunction[j] = eqSolution(xAxis[j]);
@@ -105,9 +102,9 @@ public class MVmanager {
 
         int z = 1;
         while(z < n){
-            eulerError[z] = abs(solvedFunction[z] - eulerMethod[z]);
-            improvedEulerError[z] = abs(solvedFunction[z] - improvedEulerMethod[z]);
-            rungeKuttaError[z] = abs(solvedFunction[z] - rungeMethod[z]);
+            eulerError[z] = Math.abs(solvedFunction[z] - eulerMethod[z]);
+            improvedEulerError[z] = Math.abs(solvedFunction[z] - improvedEulerMethod[z]);
+            rungeKuttaError[z] = Math.abs(solvedFunction[z] - rungeMethod[z]);
             z++;
         }
 
@@ -130,9 +127,8 @@ public class MVmanager {
         errorOfRungeKutta.setName("errorOfRungeKutta");
 
 
-        //int s = 0;
-        for (int s = 0; s < n; s++)
-        {
+        int s = 0;
+        while(s < n){
             functionSol.getData().add(new XYChart.Data(xAxis[s],solvedFunction[s]));
             euler.getData().add(new XYChart.Data(xAxis[s],eulerMethod[s]));
             eulerImproved.getData().add(new XYChart.Data(xAxis[s],improvedEulerMethod[s]));
@@ -140,7 +136,9 @@ public class MVmanager {
             errorOfEuler.getData().add(new XYChart.Data(xAxis[s],eulerError[s]));
             errorOfEulerImproved.getData().add(new XYChart.Data(xAxis[s],improvedEulerError[s]));
             errorOfRungeKutta.getData().add(new XYChart.Data(xAxis[s],rungeKuttaError[s]));
+            s++;
         }
+
 
         Scene scene = new Scene(MyChart,600,600);
         MyChart.getData().addAll(errorOfEuler,errorOfEulerImproved, errorOfRungeKutta);
@@ -148,5 +146,12 @@ public class MVmanager {
 
         stage1.show();
 
+    }
+
+    private void originalFunctionPlotter(int range){
+        double[] yValues = new double[range];
+        for (int w = 0; w < range; w++){
+            yValues[w] = eqSolution(w);
+        }
     }
 }
